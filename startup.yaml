@@ -1,0 +1,62 @@
+#cloud-config
+users:
+  - name: yc-user
+    groups: sudo
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDPOzeQ8Dgtdpj6vGie7TRhD8UuNi8CZyIcRiUz/2f26+aHfW7oeGBhMkMonADZVNB6xbkQhXhJ8t1Gy9K4fI+G/DNGjKXuIfQeOpB4zo+6TumFAKY4BXu/3Y9EmXbafesJ1NGBZ1iqLeCr5KNi7rgfPVVwfLdiUdGGVjNpsV5mTh+l2NtVfKcW9aJLUqx8zZFoFBgnP08Kh1YIQkav3hxcC/ADnIev/KekFeiQjQUx8EGZXS6pL3tqE6LjcewQjti51HMgs2quzKwkXHzlhgjFC7GIRu9M+hn/yZD3IlveLOUz1p4VxpNDfdnjXNlDCrrT4hEEsWxBil1rupJhhDvYw5BWine71dWPK+LUaHS1/e+fi8GgzK6OOcEXFLiFiOQRO+7uANc3zQMjlHLhu4fisPirmt6FZJ/3v26TDlvC7o8v7c2fAMu3oMQncuQrxLyNx1JLt1mgpKTxSTNnMyMUmT4zy/nNNReqls7Ql+CeHaIFqBtaU7ROaK0SNr7tm78= yc-user
+apt:
+  sources:
+    source1:
+      source: "deb https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.4 multiverse"
+      key: |
+        -----BEGIN PGP PUBLIC KEY BLOCK-----
+        Version: GnuPG v1
+
+        mQINBFzteqwBEADSirbLWsjgkQmdWr06jXPN8049MCqXQIZ2ovy9uJPyLkHgOCta
+        8dmX+8Fkk5yNOLScjB1HUGJxAWJG+AhldW1xQGeo6loDfTW1mlfetq/zpW7CKbUp
+        qve9eYYulneAy/81M/UoUZSzHqj6XY39wzJCH20H+Qx3WwcqXgSU7fSFXyJ4EBYs
+        kWybbrAra5v29LUTBd7OvvS+Swovdh4T31YijUOUUL/gJkBI9UneVyV7/8DdUoVJ
+        a8ym2pZ6ALy+GZrWBHcCKD/rQjEkXJnDglu+FSUI50SzaC9YX31TTzEMJijiPi6I
+        MIZJMXLH7GpCIDcvyrLWIRYVJAQRoYJB4rmp42HTyed4eg4RnSiFrxVV5xQaDnSl
+        /8zSOdVMBVewp8ipv34VeRXgNTgRkhA2JmL+KlALMkPo7MbRkJF01DiOOsIdz3Iu
+        43oYg3QYmqxZI6kZNtXpUMnJeuRmMQJJN8yc9ZdOA9Ll2TTcIql8XEsjGcM7IWM9
+        CP6zGwCcbrv72Ka+h/bGaLpwLbpkr5I8PjjSECn9fBcgnVX6HfKH7u3y11+Va1nh
+        a8ZEE1TuOqRxnVDQ+K4iwaZFgFYsBMKo2ghoU2ZbZxu14vs6Eksn6UFsm8DpPwfy
+        jtLtdje8jrbYAqAy5zIMLoW+I6Rb5sU3Olh9nI7NW4T5qQeemBcuRAwB4QARAQAB
+        tDdNb25nb0RCIDQuNCBSZWxlYXNlIFNpZ25pbmcgS2V5IDxwYWNrYWdpbmdAbW9u
+        Z29kYi5jb20+iQI+BBMBAgAoBQJc7XqsAhsDBQkJZgGABgsJCAcDAgYVCAIJCgsE
+        FgIDAQIeAQIXgAAKCRBlZAjjkM+x9SKmD/9BzdjFAgBPPkUnD5pJQgsBQKUEkDsu
+        cht6Q0Y4M635K7okpqJvXtZV5Mo+ajWZjUeHn4wPdVgzF2ItwVLRjjak3tIZfe3+
+        ME5Y27Aej3LeqQC3Q5g6SnpeZwVEhWzU35CnyhQecP4AhDG3FO0gKUn3GkEgmsd6
+        rnXAQLEw3VUYO8boxqBF3zjmFLIIaODYNmO1bLddJgvZlefUC62lWBBUs6Z7PBnl
+        q7qBQFhz9qV9zXZwCT2/vgGLg5JcwVdcJXwAsQSr1WCVd7Y79+JcA7BZiSg9FAQd
+        4t2dCkkctoUKgXsAH5fPwErGNj5L6iUnhFODPvdDJ7l35UcIZ2h74lqfEh+jh8eo
+        UgxkcI2y2FY/lPapcPPKe0FHzCxG2U/NRdM+sqrIfp9+s88Bj+Eub7OhW4dF3AlL
+        bh/BGHL9R8xAJRDLv8v7nsKkZWUnJaskeDFCKX3rjcTyTRWTG7EuMCmCn0Ou1hKc
+        R3ECvIq0pVfVh+qk0hu+A5Dvj6k3QDcTfse+KfSAJkYvRKiuRuq5KgYcX3YSzL6K
+        aZitMyu18XsQxKavpIGzaDhWyrVAig3XXF//zxowYVwuOikr5czgqizu87cqjpyn
+        S0vVG4Q3+LswH4xVTn3UWadY/9FkM167ecouu4g3op29VDi7hCKsMeFvFP6OOIls
+        G4vQ/QbzucK77Q==
+        =eD3N
+        -----END PGP PUBLIC KEY BLOCK-----
+packages:
+  - ruby-full
+  - ruby-bundler
+  - bundler
+  - build-essential
+  - git
+  - mongodb-org
+package_update: true
+write_files:
+  - path: /var/lib/cloud/scripts/per-boot/puma_run.sh
+    permissions: '0555'
+    content: |
+      #!/bin/bash
+      sudo systemctl start mongod
+      sudo systemctl enable mongod
+      cd /home/yc-user/
+      sudo git clone -b monolith https://github.com/express42/reddit.git
+      cd /home/yc-user/reddit && sudo bundle install
+      sudo puma -d
