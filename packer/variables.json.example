@@ -2,7 +2,7 @@
 	"folder_id":"1",
 	"source_image_name":"ubuntu-1604-lts",
 	"subnet_id":"2",
-	"service_account_key_file": "...key.json",
+	"service_account_key_file": "key.json",
 	"source_image_name_immutable":"reddit-base-test",
 	"image_name_base":"reddit-base-test",
 	"image_name_immutable":"reddit-immutable",
