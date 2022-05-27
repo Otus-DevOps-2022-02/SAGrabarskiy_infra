@@ -1,0 +1,5 @@
+bucket     = "terraform-20220523232810823100000001"
+region     = "ru-central1-a"
+key        = "terraform-prod.tfstate"
+access_key = "1"
+secret_key = "2"

@@ -9,6 +9,7 @@ ExecReload=/bin/kill -HUP $MAINPID
 WorkingDirectory=/home/ubuntu/reddit
 KillMode=process
 Restart=on-failure
+EnvironmentFile=/etc/systemd/system/puma.env
 
 [Install]
 WantedBy=multi-user.target
