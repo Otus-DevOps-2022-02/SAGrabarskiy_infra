@@ -163,4 +163,21 @@ net:
    port: 27017
    bindIp: 0.0.0.0
  ```
-  а также подготовка с использованием db.external_ip_address_db и перенос puma.env, запуск приложения reddit-app. Для передачи ip адреса VM mongodb использована переменная из модуля db module.db.external_ip_address_db. Так как терраформ сам определяет зависимые модули и порядок их установки, то порядок их положения в конфиге не принципиален.
+
+ ```
+   provisioner "file" {
+    source      = "../files/mongod.conf"
+    destination = "/tmp/mongod.conf"
+  }
+ ```
+  а также подготовим конфиг службы приложения́ с использованием функции templatefile и  provisioner "file" :
+
+```
+  provisioner "file" {
+    content     = templatefile("../files/puma.env.tftpl", {database_ip = var.database_ip})
+    destination = "/tmp/puma.env"
+  }
+ ```
+
+  Для передачи ip адреса VM mongodb использована переменная из модуля db module.db.external_ip_address_db.
+  Так как terraform сам определяет зависимые модули и порядок их установки, то порядок их положения в конфиге не принципиален.

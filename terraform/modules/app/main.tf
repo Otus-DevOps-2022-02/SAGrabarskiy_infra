@@ -7,7 +7,6 @@
 #  }
 #  required_version = ">= 0.13"
 #}
-
 data "yandex_compute_image" "container-optimized-image-app" {
   name = var.app_disk_image
 }
@@ -43,11 +42,8 @@ resource "yandex_compute_instance" "app" {
     # путь до приватного ключа
     private_key = file(var.private_key_path)
   }
-  provisioner "local-exec" {
-    command = "echo DATABASE_URL=${var.database_ip}:27017 >> ../files/puma.env"
-  }
   provisioner "file" {
-    source      = "../files/puma.env"
+    content     = templatefile("../files/puma.env.tftpl", {database_ip = var.database_ip})
     destination = "/tmp/puma.env"
   }
   provisioner "file" {
