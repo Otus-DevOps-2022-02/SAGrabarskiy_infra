@@ -5,11 +5,9 @@ variable "public_key_path" {}
 variable "private_key_path" {}
 variable "image_id" {}
 variable "subnet_id" {}
+variable "reddit_app_name" {}
+variable "reddit_db_name" {}
 variable "service_account_key_file" { default = "key.json" }
-variable "target_port" { default = "9292" }
-variable "lb_port" { default = "80" }
-variable "access_key" {}
-variable "secret_key" {}
 variable "app_disk_image" {
   description = "Disk image for reddit app"
   default     = "reddit-base-app"

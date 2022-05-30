@@ -140,6 +140,44 @@ output переменные адрес балансировщика.] Допол
 
 - В файл variables.tf добавлены переменные variable "yc_instance_zone" { default = "ru-central1-a" }, variable "private_key_path" {}. Создан файл terraform.tfvars.example, в котором указаны переменные для образца
 - Добавлен файл lb.tf, в котором добавлен балансировщик YC "yandex_lb_network_load_balancer.lb-reddit-app", добавлена переменная var.target_port для проверки доступности приложения веб-сервера reddit-app.Проверен доступ к приложению
-по адресу переводчика
+по адресу балансировщика
 - Добавлен дополнительный инстанс сервера приложения reddit-app2, в output переменные выведен адрес второго сервера yandex_compute_instance.app[1].network_interface.0.nat_ip_address. Неудобство создания нового инстанса с помощью дублирования кода.
 - Удалено описание нового инстанса reddit-app2. В ресурс yandex_compute_instance.app добавлен объект count, для создания одинаковых ресурсов, с использованием переменной variable "yc_instance_app_count" { default = 1 } и значением yc_instance_app_count = 2 для создания двух инстансов
+
+# Выполнено ДЗ № 9
+
+ - [Разделить конфигурацию виртуальной машины из предыдущего ДЗ на две - одну для mongodb, вторую для reddit-app] Основное ДЗ
+ - [Настроить хранение состояния текущей конфигурации в yandex object storage] Дополнительное ДЗ
+ - [Настроить запуск приложения на одной ВМ и хранения данных в другой] Дополнительное ДЗ
+
+## В процессе сделано:
+
+- Из конфигурации образа диска parker ubuntu16.json выделено два конфига - app.json и db.json для образов дисков с предустановленной mongodb для db и ruby для app. Освоена работа с модулями terraform - из файла main.tf выделено два модуля terraform (app и db) - для запуска приложения reddit-app и для бэкенда mongodb. Также создано две конфигурации - stage и prod для проверки создания двух vm.
+- Выделена конфигурация backend для хранения текущего состояния terraform. Для этого созданы файлы buckets/bucket.tf и в каждой конфигурации prod и stage задан конфиг бэкенда config.s3.tfbackend и файл конфигурации backend.tf.
+Применение командой terraform init -backend-config=config.s3.tfbackend.
+- Настроены провиженеры переноса заранее подготовленного конфига mongodb
+```
+storage:
+   dbPath: /var/lib/mongodb
+net:
+   port: 27017
+   bindIp: 0.0.0.0
+ ```
+
+ ```
+   provisioner "file" {
+    source      = "../files/mongod.conf"
+    destination = "/tmp/mongod.conf"
+  }
+ ```
+  а также подготовим конфиг службы приложения́ с использованием функции templatefile и  provisioner "file" :
+
+```
+  provisioner "file" {
+    content     = templatefile("../files/puma.env.tftpl", {database_ip = var.database_ip})
+    destination = "/tmp/puma.env"
+  }
+ ```
+
+  Для передачи ip адреса VM mongodb использована переменная из модуля db module.db.external_ip_address_db.
+  Так как terraform сам определяет зависимые модули и порядок их установки, то порядок их положения в конфиге не принципиален.
