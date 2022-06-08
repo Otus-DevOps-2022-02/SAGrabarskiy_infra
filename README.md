@@ -233,14 +233,15 @@ net:
 	appserver | CHANGED | rc=0 >>
 ```
 
+## Как запустить проект:
 - С помощью golang создано приложение для работы с ansible c использованием динамического inventory.
-Код приложения в директории ansible/inventory_plug. Сборка (при наличии установленного go):
+Код приложения в директории ansible/inventory_plug. Сборка (при наличии установленного стандартного окружения go):
 ```
   cd /inventory_plug/
   go get github.com/yandex-cloud/go-sdk
   go build -ldflags="-s -w"
 ```
-Проверка ansible dynamic inventory:
+## Как проверить работоспособность:
 ```
   $ ansible -i inventory_plug.exe app -m ping
 
