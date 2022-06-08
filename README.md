@@ -181,3 +181,92 @@ net:
 
   Для передачи ip адреса VM mongodb использована переменная из модуля db module.db.external_ip_address_db.
   Так как terraform сам определяет зависимые модули и порядок их установки, то порядок их положения в конфиге не принципиален.
+
+ # Выполнено ДЗ № 10
+
+ - [Научиться базовым командам настройки и подключения к существующим хостам ВМ, запуска команд на удаленных хостах, освоить работу с inventory.yaml и inventory] Основное ДЗ
+ - [Создать скрипт\программу для проверки работоспособности динамического inventory] Дополнительное ДЗ
+
+## В процессе сделано:
+- Настроен inventory файл с настройками статических адресов доступных серверов
+	```
+	$ ansible -i inventory_plug.exe app -m ping
+	51.250.74.248 | SUCCESS => {
+		"ansible_facts": {
+			"discovered_interpreter_python": "/usr/bin/python3"
+		},
+		"changed": false,
+		"ping": "pong"
+	}
+	```
+
+- Настроен inventory.yaml файл с настройками статических адресов доступных серверов, аналогично проверена его работоспособность
+- Проверено выполнение команд на удаленном хосте:
+
+```
+  ansible app -m shell -a 'ruby -v; bundler -v'
+  ansible db -m command -a 'systemctl status mongod'
+  ansible db -m shell -a 'systemctl status mongod'
+  ansible db -m systemd -a name=mongod
+  ansible db -m service -a name=mongod
+
+  ansible app -m git -a 'repo=https://github.com/express42/reddit.git dest=/home/ubuntu/reddit'
+  ansible app -m command -a 'git clone https://github.com/express42/reddit.git /home/ubuntu/reddit'
+
+```
+- Проверена установка и удаление репозитория приложения на удаленном хосте с помощью плейбука clone.yml:
+```
+	---
+	- name: Clone
+	  hosts: app
+	  tasks:
+		- name: Clone repo
+		  git:
+			repo: https://github.com/express42/reddit.git
+			dest: /home/ubuntu/reddit
+```
+- Команды запуска и проверки
+```
+	ansible-playbook clone.yml
+	ansible app -m shell -a 'rm -rf ~/reddit'
+	result :
+	appserver | CHANGED | rc=0 >>
+```
+
+- С помощью golang создано приложение для работы с ansible c использованием динамического inventory.
+Код приложения в директории ansible/inventory_plug. Сборка (при наличии установленного go):
+```
+  cd /inventory_plug/
+  go get github.com/yandex-cloud/go-sdk
+  go build -ldflags="-s -w"
+```
+Проверка ansible dynamic inventory:
+```
+  $ ansible -i inventory_plug.exe app -m ping
+
+51.250.74.248 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+```
+```
+  $ ansible -i inventory_plug.exe all -m ping
+
+51.250.74.248 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+51.250.95.254 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+```
