@@ -1,12 +1,12 @@
-terraform {
-  required_providers {
-    yandex = {
-      source  = "yandex-cloud/yandex"
-      version = "0.74.0"
-    }
-  }
-  required_version = ">= 0.13"
-}
+#terraform {
+#  required_providers {
+#    yandex = {
+#      source  = "yandex-cloud/yandex"
+#      version = "0.74.0"
+#    }
+#  }
+#  required_version = ">= 0.13"
+#}
 data "yandex_compute_image" "container-optimized-image-app" {
   name = var.app_disk_image
 }
