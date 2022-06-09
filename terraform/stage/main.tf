@@ -5,6 +5,7 @@
 #      version = "0.74.0"
 #    }
 #  }
+#  required_version = ">= 0.13"
 #}
 provider "yandex" {
   service_account_key_file = var.service_account_key_file
