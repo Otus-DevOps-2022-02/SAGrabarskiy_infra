@@ -1,12 +1,12 @@
-#terraform {
-#  required_providers {
-#    yandex = {
-#      source  = "yandex-cloud/yandex"
-#      version = "0.74.0"
-#    }
-#  }
-#  required_version = ">= 0.13"
-#}
+/* terraform {
+  required_providers {
+    yandex = {
+      source  = "yandex-cloud/yandex"
+      version = "0.74.0"
+    }
+  }
+  required_version = ">= 0.13"
+} */
 data "yandex_compute_image" "container-optimized-image-db" {
   name = var.db_disk_image
 }
@@ -40,11 +40,11 @@ resource "yandex_compute_instance" "db" {
     # путь до приватного ключа
     private_key = file(var.private_key_path)
   }
-  provisioner "file" {
-    source      = "../files/mongod.conf"
-    destination = "/tmp/mongod.conf"
-  }
-  provisioner "remote-exec" {
-    script = "../files/mv_mongod_conf.sh"
-  }
+#  provisioner "file" {
+#    source      = "../files/mongod.conf"
+#    destination = "/tmp/mongod.conf"
+#  }
+#  provisioner "remote-exec" {
+#    script = "../files/mv_mongod_conf.sh"
+#  }
 }

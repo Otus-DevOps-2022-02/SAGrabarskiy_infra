@@ -1,0 +1,44 @@
+---
+- name: Install MongoDB 4.4
+  hosts: all
+  become: yes
+  become_method: sudo
+  tasks:
+
+  - name: Install packages libcurl3 openssl liblzma5
+    package:
+      name: [libcurl3, openssl, liblzma5]
+      state: present
+      update_cache: yes
+
+  # Добавим ключ репозитория для последующей работы с ним
+  - name: Copy mongo from local to tmp
+    copy: src={{ item.0 }} dest={{ item.1 }}
+    with_together:
+      - [ '/mnt/e/SAGrabarskiy_infra/ansible/mongo/mongodb-v4.4-latest.tgz', '/mnt/e/SAGrabarskiy_infra/ansible/mongo/mongod.service', '/mnt/e/SAGrabarskiy_infra/ansible/mongo/mongod.conf' ]
+      - [ '/tmp/mongodb-v4.4.tgz', '/lib/systemd/system/mongod.service', '/etc/mongod.conf' ]
+
+  - name: Extract archive mongodb-v4.4.tgz
+    unarchive:
+      src: /tmp/mongodb-v4.4.tgz
+      dest: /tmp
+      extra_opts: [--strip-components=1]
+      remote_src: yes
+
+  - name: Copy mongod.service, extracted mongodb-v4.4
+    copy: src=/tmp/bin/ dest=/usr/local/bin remote_src=yes
+
+  - name: chown /var/log/mongodb
+    file: path={{ item }} owner=ubuntu group=ubuntu mode=0775 state=directory recurse=yes
+    with_list:
+      - /var/log/mongodb
+      - /var/lib/mongo
+
+  - name: chmod /usr/local/bin
+    file: path=/usr/local/bin mode=u+x,g+x,o+x state=directory recurse=yes
+
+  - name: Enable and start mongoDB
+    service:
+      name: mongod
+      state: started
+      enabled: yes

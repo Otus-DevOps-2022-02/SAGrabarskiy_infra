@@ -1,0 +1,15 @@
+[Unit]
+Description=Puma auto start
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -lc 'puma'
+User=ubuntu
+WorkingDirectory=/home/ubuntu/reddit
+KillMode=process
+Restart=always
+EnvironmentFile=/home/ubuntu/db_config
+
+[Install]
+WantedBy=multi-user.target

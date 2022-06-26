@@ -14,16 +14,11 @@
 			"use_ipv4_nat" : "true"
 		}
 	],
-	"provisioners": [
+    "provisioners": [
 		{
-			"type": "shell",
-			"script": "scripts/install_git.sh",
-			"execute_command": "sudo {{.Path}}"
-		},
-		{
-			"type": "shell",
-			"script": "scripts/install_mongodb.sh",
-			"execute_command": "sudo {{.Path}}"
+			"type": "ansible",
+			"user": "ubuntu",
+			"playbook_file": "ansible/packer_db.yml"
 		}
 	]
 }

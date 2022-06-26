@@ -1,0 +1,10 @@
+---
+- name: Install required packages for app
+  hosts: all
+  become: true
+  tasks:
+  - name: Install git, ruby-full, bundler, ruby-bundler, build-essential
+    package:
+      name: [git, ruby-full, bundler, ruby-bundler, build-essential]
+      state: present
+      update_cache: yes
