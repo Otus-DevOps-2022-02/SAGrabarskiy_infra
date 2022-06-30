@@ -1,12 +1,12 @@
-#terraform {
-#  required_providers {
-#    yandex = {
-#      source  = "yandex-cloud/yandex"
-#      version = "0.74.0"
-#    }
-#  }
-#  required_version = ">= 0.13"
-#}
+/* terraform {
+  required_providers {
+    yandex = {
+      source  = "yandex-cloud/yandex"
+      version = "0.74.0"
+    }
+  }
+  required_version = ">= 0.13"
+} */
 data "yandex_compute_image" "container-optimized-image-app" {
   name = var.app_disk_image
 }
@@ -42,18 +42,18 @@ resource "yandex_compute_instance" "app" {
     # путь до приватного ключа
     private_key = file(var.private_key_path)
   }
-  provisioner "file" {
-    content     = templatefile("../files/puma.env.tftpl", {database_ip = var.database_ip})
-    destination = "/tmp/puma.env"
-  }
-  provisioner "file" {
-    source      = "../files/puma.service"
-    destination = "/tmp/puma.service"
-  }
-  provisioner "remote-exec" {
-    script = "../files/deploy.sh"
-  }
-  provisioner "remote-exec" {
-    script = "../files/install_puma_service.sh"
-  }
+  #provisioner "file" {
+  #  content     = templatefile("../files/puma.env.tftpl", {database_ip = var.database_ip})
+  #  destination = "/tmp/puma.env"
+  #}
+  #provisioner "file" {
+  #  source      = "../files/puma.service"
+  #  destination = "/tmp/puma.service"
+  #}
+  #provisioner "remote-exec" {
+  #  script = "../files/deploy.sh"
+  #}
+  #provisioner "remote-exec" {
+  #  script = "../files/install_puma_service.sh"
+  #}
 }

@@ -271,3 +271,111 @@ net:
     "ping": "pong"
 }
 ```
+
+ # Выполнено ДЗ № 11
+
+ - [Научиться работе с плейбуками ansible] Основное ДЗ
+ - [Научиться работе с провиженероами ansible в parcker] Дополнительное ДЗ
+
+## В процессе сделано:
+### Один плейбук, один сценарий (reddit_app_one_play.yml)
+Теги привязаны к задаче  внутри сценария, поэтому необходимо также указывать хост, для которго выполняеся сценарий:
+```
+- name: Configure hosts & deploy application # <-- Словесное описание сценария(name)
+  hosts: all # <-- Для каких хостов будут выполняться описанные ниже таски (hosts)
+  vars:
+    mongo_bind_ip: 0.0.0.0
+    db_host: 51.250.93.178
+  tasks:
+
+```
+Команды для проверки:
+
+```
+ansible-playbook reddit_app.yml --check --limit db
+nsible-playbook reddit_app.yml --check --limit app --tags app-tag
+
+```
+### Один плейбук, много сценариев (reddit_app_multiple_plays.yml)
+Теги привязаны к конкретному сценарию, хост указан также в начале сценария, поэтому не обязательно указывать хост при запуске:
+
+```
+- name: Configure MongoDB
+  hosts: db
+  tags: db-tag
+  become: true
+  vars:
+    mongo_bind_ip: 0.0.0.0
+```
+Команды для проверки:
+
+```
+ansible-playbook reddit_app2.yml --tags db-tag --check
+ansible-playbook reddit_app2.yml --tags db-tag --check
+
+```
+### Много плейбуков(app.yml,db.yml,deploy.yml,site.yml)
+Плейбуки выносятся в разные файлы app.yml,db.yml,deploy.yml и вызываются в итоговом site.yml, поэтому теги не нужны, их можно убрать, хост для которого выполнен сценарий остается:
+
+```
+- name: Configure MongoDB
+  hosts: db
+  become: true
+  vars:
+    mongo_bind_ip: 0.0.0.0
+  tasks:
+```
+
+Site.yml:
+```
+- import_playbook: db.yml
+- import_playbook: app.yml
+- import_playbook: deploy.yml
+```
+Команды для проверки:
+
+```
+ansible-playbook site.yml --check
+```
+
+### Замена провижн образов Packer на Ansible-плейбуки (packer_db.yml,packer_app.yml):
+В пакер образах провиженеры запуска shell скриптов заменены:
+- для packer/app.json  на:
+```
+"provisioners": [
+		{
+			"type": "ansible",
+			"user": "ubuntu",
+			"playbook_file": "ansible/packer_app.yml"
+		}
+	]
+```
+- для packer/db.json  на:
+```
+"provisioners": [
+		{
+			"type": "ansible",
+			"user": "ubuntu",
+			"playbook_file": "ansible/packer_db.yml"
+		}
+	]
+```
+
+Для предотвращения сбоев в работе сети при автоматическом развертывании, дистрибутив mongo 4.4 был заранее получен с официального сайта mongo и подготовлен плейбук с развертыванием нужной конфигурации (mongod.conf) без обновления по сети
+
+```
+ ansible packer_db.yml
+```
+
+Команды для проверки:
+```
+packer build --var-file=./packer/variables.json ./packer/app.json
+packer build --var-file=./packer/variables.json ./packer/db.json
+terraform destroy
+terraform apply
+ansible-playbook site.yml --check
+ansible-playbook site.yml
+```
+
+Примечание:
+Так как в новом провиженере packer_db.yml я сразу настроил запуск mongo c нужной конфигурацией, то из сценария site.yml в этом пункте ДЗ был исключен импорт плейбука db.yml (в котором происходила настройка конфига для mongo).
