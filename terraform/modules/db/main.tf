@@ -1,4 +1,4 @@
-/* terraform {
+terraform {
   required_providers {
     yandex = {
       source  = "yandex-cloud/yandex"
@@ -6,7 +6,7 @@
     }
   }
   required_version = ">= 0.13"
-} */
+}
 data "yandex_compute_image" "container-optimized-image-db" {
   name = var.db_disk_image
 }
