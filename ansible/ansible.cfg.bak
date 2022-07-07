@@ -21,7 +21,7 @@ retry_files_enabled = False
 roles_path = ./roles
 deprecation_warnings=False
 enable_plugins = host_list, script, auto, yaml, ini, toml
-vault_password_file = ~/.ansible/vault.key
+vault_password_file = ~/.vault/vault.key
 
 [diff]
 # Включим обязательный вывод diff при наличии изменений и вывод 5 строк контекста
