@@ -379,3 +379,119 @@ ansible-playbook site.yml
 
 Примечание:
 Так как в новом провиженере packer_db.yml я сразу настроил запуск mongo c нужной конфигурацией, то из сценария site.yml в этом пункте ДЗ был исключен импорт плейбука db.yml (в котором происходила настройка конфига для mongo).
+
+ # Выполнено ДЗ № 12
+
+ - [Научиться работе с ролями ansible] Основное ДЗ
+ - [Научиться работе с vault] Основное ДЗ
+
+## В процессе сделано:
+### Освоен инструмент использования ролей ansible:
+
+Инициализация:
+```
+ansible-galaxy init app
+ansible-galaxy init db
+```
+
+Сценарии плейбуков, переменные и шаблоны, а также обработчики перенесены в соотвествующие директории ролей, а в основном файле плейбука (db.yml, app.yml)
+скрипт плейбука заменен на вызов соотвествующей роли, пример для app:
+
+```
+- name: Configure App
+  hosts: app
+  become: true
+
+  roles:
+    - app
+```
+### Освоен инструмент использования окружений:
+
+Структура:
+```
+ansible\environments\prod
+ -\group_vars
+   -all
+   -app
+   -db
+ -\inventory
+ansible\environments\stage
+ -\group_vars
+    -all
+   -app
+   -db
+ -\inventory
+```
+
+В конфиге ansible.cfg можно указать окружение по умолчанию:
+
+```
+[defaults]
+inventory = ./environments/stage/inventory # Inventory по-умолчанию задается здесь
+```
+
+Запуск плейбука в определенном окружении:
+```
+ansible-playbook -i environments/prod/inventory deploy.yml
+```
+```
+ansible-playbook playbooks/site.yml --check
+```
+
+### Освоен инструмент ролей community репозитория:
+Установка роли:
+
+requirements.yml:
+```
+- src: jdauphant.nginx
+  version: v2.21.1
+```
+скрипт установки:
+```
+ansible-galaxy install -r environments/stage/requirements.yml
+```
+Добавление роли в плейбук, пример app.yml:
+```
+- name: Configure App
+  hosts: app
+  become: true
+
+  roles:
+    - app
+    - jdauphant.nginx
+
+```
+### Освоен инструмент шифрования-дешифрования с помощью ansible-vault:
+Создан файл vault.key c произвольной строкой
+Новый файл добавлен в конфиг ansible.cfg:
+```
+vault_password_file = ~/.ansible/vault.key
+```
+Добавлен плейбук для создания пользователей ansible/playbooks/users.yml
+и два credentials файла для prod и stage окружений с логинаим и праолями
+```
+ansible/environments/prod/credentials.yml
+ansible/environments/stage/credentials.yml
+```
+
+Эти файлы далее были зашифрованы спомощью команд:
+```
+ansible-vault encrypt environments/prod/credentials.yml
+ansible-vault encrypt environments/stage/credentials.yml
+```
+В файл site.yml добавлен импорт плейбука users.yml
+
+```
+---
+- import_playbook: db.yml
+- import_playbook: app.yml
+- import_playbook: deploy.yml
+- import_playbook: users.yml
+```
+Проверена авторизация пользователей после создания виртуалки:
+```
+ansible-playbook site.yml --check
+ansible-playbook site.yml
+```
+Примечание:
+при проверке сценария site.yml проверка ansible-playbook site.yml —check не проходит, так как роль jdauphant.nginx еще не создавалась (во время проверки сценария установки роли jdauphant.nginx выполняется тест наличия файлов конфигураци службы nginx по пути, которые создаются только в момент выполнения сценария)
